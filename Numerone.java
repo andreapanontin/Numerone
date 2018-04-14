@@ -169,6 +169,11 @@ public class Numerone {
 		return this.somma(this, fattore);
 	}
 	
+	public Numerone somma(long fattore) {
+		Numerone input = new Numerone(fattore);
+		return this.somma(this, input);
+	}
+	
 	/* Appena sistemato... Non l'ho ancora testato però */
 	public static Numerone differenza(Numerone fattore1, Numerone fattore2) {
 		Numerone risultato;
@@ -228,6 +233,11 @@ public class Numerone {
 	
 	public Numerone differenza(Numerone fattore) {
 		return differenza(this, fattore);
+	}
+	
+	public Numerone differenza(long fattore) {
+		Numerone input = new Numerone(fattore);
+		return this.differenza(this, input);
 	}
 	
 	// Just a stab. Not yet implemented!
