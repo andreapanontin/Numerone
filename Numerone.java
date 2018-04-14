@@ -240,6 +240,44 @@ public class Numerone {
 		return this.differenza(this, input);
 	}
 	
+	public static Numerone prodotto(Numerone fattore1, Numerone fattore2) {
+		Numerone fattore, risultato;
+		boolean segnoRisultato;
+		long riporto = 0;
+		long[] fatt, fatt1 = fattore1.getNumerini(), fatt2 = fattore2.getNumerini();
+		long[][] prodotto = new long[fatt1.length][fatt2.length + 1];
+		
+		segnoRisultato = !xor(fattore1.getSegno(), fattore2.getSegno());
+		fatt = new long[1];
+		fatt[0] = 0;
+		risultato = new Numerone(fatt, segnoRisultato);
+		
+		for (int j = 0; j < fatt1.length; j++) {
+			for (int i = fatt2.length - 1; i >= 0; i--) {
+				prodotto[j][i + 1] = fatt1[j] * fatt2[i];
+				prodotto[j][i + 1] += riporto;
+				
+				riporto = prodotto[j][i + 1] / CONTROLLO;
+				prodotto[j][i + 1] = prodotto[j][i + 1] % CONTROLLO;
+			}
+			prodotto[j][0] = riporto;
+			riporto = 0;
+		}
+		
+		for (int j = fatt1.length - 1; j >= 0; j--) {
+			fatt = new long[fatt2.length + fatt1.length - j];
+			
+			for (int i = 0; i < fatt2.length + 1; i++) {
+				fatt[i] = prodotto[j][i];
+			}
+			
+			fattore = new Numerone(fatt, segnoRisultato);
+			risultato = risultato.somma(fattore);
+		}
+		
+		return risultato;
+	}
+	
 	// Just a stab. Not yet implemented!
 	public static Numerone fattoriale(Numerone fattore) {
 		Numerone zero, menomeno, risultato;
@@ -371,7 +409,7 @@ public class Numerone {
 	}
 	
 	private static boolean xor(boolean a1, boolean a2) {
-		return (!(a1 & a2) && (a1 | a2));
+		return (!(a1 && a2) && (a1 | a2));
 	}
 	
 	private static long[] sanitize(long[] input) {
@@ -390,20 +428,25 @@ public class Numerone {
 	}
 	
 	public static void main(String[] args) {
-		Numerone numero0 = new Numerone(-1000000000);
-		Numerone numero1 = new Numerone(1000000000);
+		Numerone numero0 = new Numerone(-111111111);
+		Numerone numero1 = new Numerone(111111111);
+		Numerone dieci = new Numerone(10);
 		
 		System.out.println(numero1);
-		System.out.println(numero1.getNumerini().length);
+		System.out.println(dieci.getNumerini().length);
 		
+		/*
 		for (int i = 0; i < 100; i++) {
 			numero0 = numero0.somma(numero0);
 			numero1 = numero1.somma(numero1);
 		System.out.println(numero1);
 		System.out.println(numero1.getNumerini().length);
-		}
+		}*/
 		
-		Numerone numero = Numerone.somma(numero0, numero1);
+		Numerone numero = Numerone.prodotto(numero0, numero1);
+		for (int i = 0; i < 65; i++) {
+			numero = Numerone.prodotto(numero, dieci);
+		}
 		System.out.println(numero);
 		long[] temp = numero.getNumerini();
 		System.out.println(temp.length);
