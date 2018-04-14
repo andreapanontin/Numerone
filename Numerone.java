@@ -4,8 +4,6 @@
 * * Modificare Costruttore di default a costrutore interattivo... Devi cercare
 *   bene come si posssa Implementare: non credo sia una bnalita'
 * * Implementare prodotto tra due numeroni
-* * Implementare Fattoriale con un numerone in input (forse non e' la migliore
-*   idea...)
 * * Implementare potenza con due numeroni in input
 */ 
 
@@ -278,26 +276,27 @@ public class Numerone {
 		return risultato;
 	}
 	
-	// Just a stab. Not yet implemented!
 	public static Numerone fattoriale(Numerone fattore) {
 		Numerone zero, menomeno, risultato;
 		long[] temp;
 		zero = new Numerone();
 		menomeno = new Numerone(-1);
-		risultato = new Numerone();
+		risultato = new Numerone(1);
 		
 		if (fattore.isGreater(zero)) {
 			while (!fattore.equals(zero)) {
-				for (int j=risultato.getNumerini().length-1; j>=0; j--) {
-					// Devi riadattare il codice che avevi Implementato in 
-					// fattoriale Steroidi sulla base del metodo prodotto
-				}
+				risultato = prodotto(risultato, fattore);
 				
 				fattore = fattore.somma(menomeno);
 			}
 		}
 		
 		return risultato;
+	}
+	
+	public static Numerone fattoriale(long fattore) {
+		Numerone input = new Numerone(fattore);
+		return fattoriale(input);
 	}
 	
 	public static boolean equals(Numerone fattore1, Numerone fattore2) {
@@ -428,7 +427,7 @@ public class Numerone {
 	}
 	
 	public static void main(String[] args) {
-		Numerone numero0 = new Numerone(-111111111);
+		/*Numerone numero0 = new Numerone(-111111111);
 		Numerone numero1 = new Numerone(111111111);
 		Numerone dieci = new Numerone(10);
 		
@@ -441,7 +440,7 @@ public class Numerone {
 			numero1 = numero1.somma(numero1);
 		System.out.println(numero1);
 		System.out.println(numero1.getNumerini().length);
-		}*/
+		}
 		
 		Numerone numero = Numerone.prodotto(numero0, numero1);
 		for (int i = 0; i < 65; i++) {
@@ -449,6 +448,14 @@ public class Numerone {
 		}
 		System.out.println(numero);
 		long[] temp = numero.getNumerini();
-		System.out.println(temp.length);
+		System.out.println(temp.length);*/
+		
+		Numerone fattoriale;
+		for (int i = 1; i < 100; i++) {
+			System.out.println(i + "! = " + Numerone.fattoriale(i));
+		}
+		fattoriale = Numerone.fattoriale(5000);
+		System.out.println("5000! = " + fattoriale);
+		System.out.println(fattoriale.getNumerini().length);
 	}
 }
