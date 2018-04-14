@@ -110,13 +110,13 @@ public class Numerone {
 		Numerone risultato;
 		long[] fatt1 = fattore1.getNumerini(), fatt2 = fattore2.getNumerini();
 		
-		if (Numerone.xor(fattore1.getSegno(), fattore2.getSegno())) {
+		if (xor(fattore1.getSegno(), fattore2.getSegno())) {
 			if (fattore1.getSegno()) {
 				Numerone fattore3 = new Numerone(fatt2, true);
-				risultato = Numerone.differenza(fattore1, fattore3);
+				risultato = differenza(fattore1, fattore3);
 			} else {
 				Numerone fattore3 = new Numerone(fatt1, true);
-				risultato = Numerone.differenza(fattore2, fattore3);
+				risultato = differenza(fattore2, fattore3);
 			}
 		} else {
 			if (fatt1.length < fatt2.length) {
@@ -155,15 +155,9 @@ public class Numerone {
 			
 			temp[0] = riporto;
 			
-			if (temp[0] == 0) {
-				long[] temp2 = new long[lunghezza-1];
-				
-				for (int i = 0; i < temp2.length; i++) {
-					temp2[i] = temp[i+1];
-				}
-				
-				temp = temp2;
-			}
+			// Elimino eventuali celle nulle del vettore, per evitare
+			// di consumare troppa memoria
+			temp = sanitize(temp);
 			
 			risultato = new Numerone(temp, fattore1.getSegno());
 		}
@@ -183,9 +177,9 @@ public class Numerone {
 		
 		// Se i due fattori hanno segni diversi => devo fare una somma, 
 		// invertendo il segno del secondo fattore
-		if (Numerone.xor(fattore1.getSegno(), fattore2.getSegno())) {
+		if (xor(fattore1.getSegno(), fattore2.getSegno())) {
 			Numerone fattore3 = new Numerone(fatt2, !fattore2.getSegno());
-			risultato = Numerone.somma(fattore1, fattore3);
+			risultato = somma(fattore1, fattore3);
 		} else {
 			// Se il primo fattore è maggiore (in vaole assoluto) del secondo =>
 			// il segno del risultato coincide con quello del primo fattore
@@ -225,18 +219,7 @@ public class Numerone {
 			
 			// Elimino eventuali celle nulle del vettore, per evitare
 			// di consumare troppa memoria
-			int j = 0;
-			while (j < (temp.length - 1) && temp[j] == 0) {
-				j++;
-			}
-			
-			long[] temp2 = new long[lunghezza-j];
-			
-			for (int i = 0; i < temp2.length; i++) {
-				temp2[i] = temp[i+j];
-			}
-			
-			temp = temp2;
+			temp = sanitize(temp);
 			risultato = new Numerone(temp, segnoRisultato);
 		}
 		
@@ -244,7 +227,7 @@ public class Numerone {
 	}
 	
 	public Numerone differenza(Numerone fattore) {
-		return this.differenza(this, fattore);
+		return differenza(this, fattore);
 	}
 	
 	// Just a stab. Not yet implemented!
@@ -257,7 +240,7 @@ public class Numerone {
 		
 		if (fattore.isGreater(zero)) {
 			while (!fattore.equals(zero)) {
-				for (int j=risultato.length-1; j>=0; j--) {
+				for (int j=risultato.getNumerini().length-1; j>=0; j--) {
 					// Devi riadattare il codice che avevi Implementato in 
 					// fattoriale Steroidi sulla base del metodo prodotto
 				}
@@ -276,7 +259,7 @@ public class Numerone {
 		fatt2 = fattore2.getNumerini();
 		
 		// Se i due numeri hanno segno discorde => sono diversi
-		if (Numerone.xor(fattore1.getSegno(), fattore2.getSegno())) {
+		if (xor(fattore1.getSegno(), fattore2.getSegno())) {
 			uguali = false;
 		} else if (fatt1.length != fatt2.length) {
 			// Se non hanno la stessa lunghezza => sono diversi
@@ -305,7 +288,7 @@ public class Numerone {
 		segno2 = fattore2.getSegno();
 		
 		// Se sono uguali => il primo non è maggiore del secondo (MDS)
-		if (Numerone.equals(fattore1, fattore2)) {
+		if (equals(fattore1, fattore2)) {
 			maggiore = false;
 		} else {
 			if (segno1) {
@@ -357,10 +340,10 @@ public class Numerone {
 		boolean minore = true;
 		
 		// Si spiega da solo
-		if (Numerone.equals(fattore1, fattore2)) {
+		if (equals(fattore1, fattore2)) {
 			minore = false;
 		} else {
-			minore = !Numerone.isGreater(fattore1, fattore2);
+			minore = !isGreater(fattore1, fattore2);
 		}
 		
 		return minore;
@@ -381,6 +364,21 @@ public class Numerone {
 		return (!(a1 & a2) && (a1 | a2));
 	}
 	
+	private static long[] sanitize(long[] input) {
+		int j = 0;
+		while (j < (input.length - 1) && input[j] == 0) {
+			j++;
+		}
+		
+		long[] output = new long[input.length-j];
+		
+		for (int i = 0; i < output.length; i++) {
+			output[i] = input[i+j];
+		}
+		
+		return output;
+	}
+	
 	public static void main(String[] args) {
 		Numerone numero0 = new Numerone(-1000000000);
 		Numerone numero1 = new Numerone(1000000000);
@@ -388,7 +386,7 @@ public class Numerone {
 		System.out.println(numero1);
 		System.out.println(numero1.getNumerini().length);
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			numero0 = numero0.somma(numero0);
 			numero1 = numero1.somma(numero1);
 		System.out.println(numero1);
