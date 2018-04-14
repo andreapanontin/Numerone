@@ -276,16 +276,24 @@ public class Numerone {
 		return risultato;
 	}
 	
+	public Numerone prodotto(Numerone fattore) {
+		return prodotto(this, fattore);
+	}
+	
+	public Numerone prodotto(long fattore) {
+		Numerone input = new Numerone(fattore);
+		return this.prodotto(input, this);
+	}
+	
 	public static Numerone fattoriale(Numerone fattore) {
 		Numerone zero, menomeno, risultato;
-		long[] temp;
-		zero = new Numerone();
+		zero = new Numerone(0);
 		menomeno = new Numerone(-1);
 		risultato = new Numerone(1);
 		
 		if (fattore.isGreater(zero)) {
 			while (!fattore.equals(zero)) {
-				risultato = prodotto(risultato, fattore);
+				risultato = risultato.prodotto(fattore);
 				
 				fattore = fattore.somma(menomeno);
 			}
@@ -294,9 +302,17 @@ public class Numerone {
 		return risultato;
 	}
 	
-	public static Numerone fattoriale(long fattore) {
-		Numerone input = new Numerone(fattore);
-		return fattoriale(input);
+	public static Numerone fattoriale(long fattore) {		
+		Numerone risultato;
+		risultato = new Numerone(1);
+		
+		if (fattore > 0) {
+			for (int i = 1; i <= fattore; i++) {
+				risultato = risultato.prodotto(i);
+			}
+		}
+		
+		return risultato;
 	}
 	
 	public static boolean equals(Numerone fattore1, Numerone fattore2) {
@@ -454,8 +470,8 @@ public class Numerone {
 		for (int i = 1; i < 100; i++) {
 			System.out.println(i + "! = " + Numerone.fattoriale(i));
 		}
-		fattoriale = Numerone.fattoriale(5000);
-		System.out.println("5000! = " + fattoriale);
+		fattoriale = Numerone.fattoriale(186123);
+		System.out.println("186123! = " + fattoriale);
 		System.out.println(fattoriale.getNumerini().length);
 	}
 }
