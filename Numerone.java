@@ -2,15 +2,16 @@
 * TODO:
 * * Commenta i pezzi di codice che non sono ancora commentati!
 * * Modificare Costruttore di default a costrutore interattivo... Devi cercare
-*   bene come si posssa Implementare: non credo sia una bnalita'
-* * Implementare prodotto tra due numeroni
+*   bene come si posssa Implementare: non credo sia una banalita'
 * * Implementare potenza con due numeroni in input
-*/ 
+*/
 
 public class Numerone {
+	// Questo e' l'array che contiene tutti i vari elementi di Numerone
 	private long[] numerini;
 	// True: numerone positivo; false: numerone negativo; zero è positivo...
 	private boolean segno;
+	// CONTROLLO e' il valore che ogni cella di numerini NON DEVE MAI superare
 	public static final long CONTROLLO = 1000000000;
 	
 	public Numerone(long valoreIniziale) {
@@ -23,7 +24,8 @@ public class Numerone {
 			numerini[1] = Math.abs(valoreIniziale) % CONTROLLO;
 		}
 		
-		segno = (valoreIniziale + Math.abs(valoreIniziale) != 0 || valoreIniziale == 0);
+		segno = (valoreIniziale + Math.abs(valoreIniziale) != 0
+		|| valoreIniziale == 0);
 	}
 	
 	public Numerone() {
@@ -34,7 +36,8 @@ public class Numerone {
 	public Numerone(long[] valoreIniziale, boolean segno) {
 		numerini = new long[valoreIniziale.length];
 		
-		for (int i = 0; i < numerini.length; i++) {
+		for (int i = numerini.length - 1; i >= 0
+			&& valoreIniziale[i] < CONTROLLO; i--) {
 			numerini[i] = valoreIniziale[i];
 		}
 		
@@ -82,7 +85,7 @@ public class Numerone {
 				}
 			} else {
 				if (numerini[j]!=0) {
-					// Stampo un numero di 0 adeguato a riempire le nove cifre
+					// Stampa un numero di 0 adeguato a riempire le nove cifre
 					// reppresentate da ogni elemento dell'array
 					for (int h = 1; h < 9-logaritmo(numerini[j], 10); h++) {
 						tS = tS + "0";
@@ -96,7 +99,7 @@ public class Numerone {
 			}
 		}
 		
-		// Stampa "0" se il numerone rappresenta zero
+		// Stampa "0" se il numerone rappresenta il numero zero
 		if (!inizio) {
 			tS = "0";
 		}
@@ -108,6 +111,8 @@ public class Numerone {
 		Numerone risultato;
 		long[] fatt1 = fattore1.getNumerini(), fatt2 = fattore2.getNumerini();
 		
+		// Se i numeri in input ha segni discordi => eseguo una differenza
+		// passando i fattori con segni opportuni
 		if (xor(fattore1.getSegno(), fattore2.getSegno())) {
 			if (fattore1.getSegno()) {
 				Numerone fattore3 = new Numerone(fatt2, true);
@@ -117,16 +122,24 @@ public class Numerone {
 				risultato = differenza(fattore2, fattore3);
 			}
 		} else {
+			// Voglio il numero piu' lungo per primo, per evitare di ciclare
+			// su celle non esistenti di un array (out of bound)
 			if (fatt1.length < fatt2.length) {
 				long[] fatt3 = fatt2;
 				fatt2 = fatt1;
 				fatt1 = fatt3;
 				fatt3 = null;
 			}
+			
+			// Nella somma il risultato puo' essere una cella piu' lunga degli
+			// addendi, non di piu'
 			int lunghezza = fatt1.length + 1;
 			long[] temp = new long[lunghezza];
 			long riporto = 0;
-		
+			
+			// Sommo cella per cella secondo l'algoritmo che si insegna alle
+			// elementari, nel primo ciclo sugli elementi di fattore2
+			// (il numero piu' corto dei due)
 			for (int j = 1; j <= fatt2.length; j++) {
 				temp[lunghezza - j] += fatt1[fatt1.length - j] + fatt2[fatt2.length - j];
 				temp[lunghezza - j] += riporto;
@@ -139,6 +152,7 @@ public class Numerone {
 				}
 			}
 			
+			// Nel secondo ciclo completo gli elementi di fattore1
 			for (int j = fatt2.length + 1; j <= fatt1.length; j++) {
 				temp[lunghezza - j] += fatt1[fatt1.length - j];
 				temp[lunghezza - j] += riporto;
@@ -151,6 +165,7 @@ public class Numerone {
 				}
 			}
 			
+			// Aggiungo l'ultimo riporto (se esiste)
 			temp[0] = riporto;
 			
 			// Elimino eventuali celle nulle del vettore, per evitare
@@ -250,6 +265,8 @@ public class Numerone {
 		fatt[0] = 0;
 		risultato = new Numerone(fatt, segnoRisultato);
 		
+		// Eseguo l'algoritmo di moltiplicazione che si insegna alle elementari
+		// per blocchi di 9 cifre
 		for (int j = 0; j < fatt1.length; j++) {
 			for (int i = fatt2.length - 1; i >= 0; i--) {
 				prodotto[j][i + 1] = fatt1[j] * fatt2[i];
@@ -262,6 +279,7 @@ public class Numerone {
 			riporto = 0;
 		}
 		
+		// Sommo le righe della tabella per ottenere il risultato
 		for (int j = fatt1.length - 1; j >= 0; j--) {
 			fatt = new long[fatt2.length + fatt1.length - j];
 			
@@ -291,6 +309,9 @@ public class Numerone {
 		menomeno = new Numerone(-1);
 		risultato = new Numerone(1);
 		
+		// Per ciclare su un Numerone strettamente positivo lo sommo a "-1"
+		// Tante volte quante ne servono per portarlo a 0. Nel ciclo poi
+		// Implemento l'algoritmo per il calcolo del fattoriale
 		if (fattore.isGreater(zero)) {
 			while (!fattore.equals(zero)) {
 				risultato = risultato.prodotto(fattore);
@@ -302,10 +323,13 @@ public class Numerone {
 		return risultato;
 	}
 	
-	public static Numerone fattoriale(long fattore) {		
+	public static Numerone fattoriale(long fattore) {
 		Numerone risultato;
 		risultato = new Numerone(1);
 		
+		// Posso ciclare su un long al posto che su un Numerone! Molto piu'
+		// efficiente! Inoltre l'algoritmo prodotto(long) e' piu' efficiente
+		// che il prodotto tra due numeroni
 		if (fattore > 0) {
 			for (int i = 1; i <= fattore; i++) {
 				risultato = risultato.prodotto(i);
@@ -429,12 +453,17 @@ public class Numerone {
 	
 	private static long[] sanitize(long[] input) {
 		int j = 0;
+		
+		// Conto quante celle di input sono nulle
 		while (j < (input.length - 1) && input[j] == 0) {
 			j++;
 		}
 		
+		// Creo un array lungo almeno 1, in cui non salvero' alcuna cella nulla
+		// prima dell'inizio del numero
 		long[] output = new long[input.length-j];
 		
+		// Popolo il nuovo array
 		for (int i = 0; i < output.length; i++) {
 			output[i] = input[i+j];
 		}
@@ -470,8 +499,17 @@ public class Numerone {
 		for (int i = 1; i < 100; i++) {
 			System.out.println(i + "! = " + Numerone.fattoriale(i));
 		}
-		fattoriale = Numerone.fattoriale(186123);
-		System.out.println("186123! = " + fattoriale);
+		fattoriale = Numerone.fattoriale(123);
+		System.out.println("123! = " + fattoriale);
 		System.out.println(fattoriale.getNumerini().length);
+		
+		long x = 1999999999;
+		x *= x;
+		for (int i = 0; i < 10; i++) {
+			x += x;
+		}
+		
+		System.out.println(x);
+		System.out.println(new Numerone(x));
 	}
 }
